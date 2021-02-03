@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.14)
 
 PROJECT(IES2HDR)
 
@@ -197,9 +197,22 @@ SET(SOURCE_CODE_LIST
    ${SOURCE_PATH}/rgbe.cpp
    ${HEADER_PATH}/ies_loader.h
    ${SOURCE_PATH}/ies_loader.cpp
-   ${SOURCE_PATH}/main.cpp
+   #${SOURCE_PATH}/main.cpp
 )
+SET(HEADER_LIST 
+   ${HEADER_PATH}/rgbe.h
+   ${HEADER_PATH}/ies_loader.h
+)
+
 SOURCE_GROUP("source" FILES ${SOURCE_CODE_LIST})
 
-ADD_EXECUTABLE(IES2HDR ${SOURCE_CODE_LIST})
-SET_TARGET_ATTRIBUTE(IES2HDR "tools")
+# naetherm: We want this as a static library
+#ADD_EXECUTABLE(IES2HDR ${SOURCE_CODE_LIST})
+ADD_LIBRARY(iesloader STATIC ${SOURCE_CODE_LIST})
+message("HEADER_LIST: ${HEADER_LIST}")
+set_target_properties(iesloader PROPERTIES PUBLIC_HEADER "${HEADER_LIST}")
+install(TARGETS iesloader
+        RUNTIME DESTINATION bin)
+install(TARGETS iesloader
+        PUBLIC_HEADER DESTINATION include)
+#SET_TARGET_ATTRIBUTE(IES2HDR "tools")
